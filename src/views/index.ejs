@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="style.css">
+        <title>School work list</title>
+    </head>
+    <body>
+        <h3><a href="/">Home</a> Homework List</h3>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Subject</th>
+                <th>Date of Submission</th>
+                <th>Work</th>
+                <th>Length</th>
+                <th>Actions</th>
+            </tr>
+        </table>
+        <button id="insert">insert row</button>
+        <button id="filter">filter rows</button>
+    </body>
+    <script src="https://momentjs.com/downloads/moment.js"></script>
+    <script>
+        document.querySelector("#insert").addEventListener("click", () => {window.location.href = "/insert"});
+        document.querySelector("#filter").addEventListener("click", () => {window.location.href = "/filter?limit=<%= limit %>&page=<%= page %>&id=<%= id %>"});
+        const table = document.querySelector("table");
+        const makeTr = (element) => {
+            let tr = document.createElement("tr");
+            let tdid = document.createElement("td"); let tdsubject = document.createElement("td"); let tdsubdate = document.createElement("td"); let tdwork = document.createElement("td"); let tdlength = document.createElement("td"); let tdactions = document.createElement("td");
+            tdid.innerText = element.ID;
+            tdsubject.innerText = element.SUBJECT;
+            tdsubdate.innerText = moment(element.DATE_SUBMISSION).format("YYYY-MM-DD");
+            tdwork.innerText = element.WORK;
+            tdlength.innerText = element.LENGTH;
+            let edit = document.createElement("button");
+            let deleteb = document.createElement("button");
+            edit.innerText = "edit";
+            deleteb.innerText = "delete";
+            edit.addEventListener("click", () => {window.location.href = `/edit/${element.ID}`});
+            deleteb.addEventListener("click", async () => {if (confirm("are you sure")) {await fetch(`/api/v1/db?id=${element.ID}`, {method: "DELETE"}); window.location.href="/"}});
+            tdactions.appendChild(edit);
+            tdactions.appendChild(deleteb);
+            tr.appendChild(tdid);
+            tr.appendChild(tdsubject);
+            tr.appendChild(tdsubdate);
+            tr.appendChild(tdwork);
+            tr.appendChild(tdlength);
+            tr.appendChild(tdactions);
+            table.appendChild(tr);
+        };
+        const fillData = async () => {
+            let res = await fetch(`/api/v1/db?limit=<%= limit %>&page=<%= page %>&id=<%= id %>`, {method: "GET"});
+            let data = await res.json();
+            data = data.data;
+            data.forEach(element => makeTr(element));
+        };
+        fillData();
+    </script>
+</html>

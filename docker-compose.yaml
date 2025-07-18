@@ -1,0 +1,18 @@
+services:
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      -  MARIADB_ROOT_PASSWORD=root-password
+      -  MARIADB_DATABASE=database
+    volumes:
+      -  ./setup.sql:/docker-entrypoint-initdb.d/setup.sql
+  app:
+    image: homeworklist
+    depends_on: [db]
+    restart: always
+    environment:
+      -  DBPASSWD=root-password
+      -  DBNAME=database
+    ports:
+      -  5000:5000

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="/style.css">
+        <title>Editing entry <%= id %></title>
+    </head>
+    <body>
+        <h3><a href="/">Home</a> Editing Row-<%= id %></h3>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Subject</th>
+                <th>Date of Submission</th>
+                <th>Work</th>
+                <th>Length</th>
+                <th></th>
+            </tr>
+            <tr>
+                <td id="id"></td>
+                <td><input id="subject" type="text"></td>
+                <td><input id="subdate" type="text"></td>
+                <td><input id="work" type="text"></td>
+                <td><input id="length" type="text"></td>
+                <td><button>Submit</button></td>
+    </body>
+    <script src="https://momentjs.com/downloads/moment.js"></script>
+    <script>
+        const id = parseInt("<%= id %>");
+        const inputs = document.querySelectorAll("input");
+        const idtext = document.querySelector("#id");
+        idtext.innerText = id;
+        const submit = document.querySelector("button");
+        const fillData = async () => {
+            let res = await fetch(`/api/v1/db?id=${id}`, {method: "GET"});
+            let data = await res.json();
+            let { SUBJECT, DATE_SUBMISSION, WORK, LENGTH } = data.data[0];
+            inputs[0].value = SUBJECT;
+            inputs[1].value = moment(DATE_SUBMISSION).format("YYYY-MM-DD");
+            inputs[2].value = WORK;
+            inputs[3].value = LENGTH;
+            return data;
+        };
+        const submitData = async () => {
+            if (![inputs].every(element => element)) {return alert("fill all inputs!")}
+            if (!parseInt(inputs[3].value)) {return alert("length should be positive int!")};
+            if (!moment(inputs[1].value, "YYYY-MM-DD", true).isValid()) {return alert("date format incorrect")};
+            let subject = inputs[0].value;
+            let subdate = inputs[1].value;
+            let work = inputs[2].value;
+            let length = inputs[3].value;
+            try {await fetch(`/api/v1/db?id=${id}`, {method: "PUT", body: JSON.stringify({subject, subdate, work, length}), headers: { "Content-Type": "application/json" }});}
+            catch(err) {console.log(err)};
+            window.location.href = "/"
+        };
+
+        let data = fillData();
+        submit.addEventListener("click", submitData);
+    </script>
+</html>

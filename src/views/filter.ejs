@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="style.css">
+        <title>Filter</title>
+    </head>
+    <body>
+        <h3><a href="/">Home</a> Filter Rows</h3>
+        <input id="limit" placeholder="rows per page" value="<%= limit %>" type="number" min="1">
+        <input id="page" placeholder="page" value="<%= page %>" type="number" min="1">
+        <input id="id" placeholder="id search (optional)" value="<%= id %>" type="number" min="1">
+        <button>sort</button>
+    </body>
+    <script>
+        document.querySelector("button").addEventListener("click", () => {
+            let limit = document.querySelector("#limit").value;
+            let page = document.querySelector("#page").value;
+            let id = document.querySelector("#id").value;
+            if (!limit) {limit = "";}
+            if (!page) {page = "";}
+            if (!id) {id = "";}
+            window.location.href=`/?limit=${limit}&page=${page}&id=${id}`
+        });
+
+    </script>
+</html>

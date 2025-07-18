@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="/style.css">
+        <title>Inserting data</title>
+    </head>
+    <body>
+        <h3><a href="/">Home</a> Insert Row</h3>
+        <table>
+            <tr>
+                <th>Subject</th>
+                <th>Date of Submission [YYYY-MM-DD]</th>
+                <th>Work</th>
+                <th>Length</th>
+                <th></th>
+            </tr>
+            <tr>
+                <td><input id="subject" type="text"></td>
+                <td><input id="subdate" type="text"></td>
+                <td><input id="work" type="text"></td>
+                <td><input id="length" type="text"></td>
+                <td><button>Submit</button></td>
+    </body>
+    <script src="https://momentjs.com/downloads/moment.js"></script>
+    <script>
+        const inputs = document.querySelectorAll("input");
+        const idtext = document.querySelector("#id");
+        const submit = document.querySelector("button");
+        inputs[1].value = moment().add(1, "week").format("YYYY-MM-DD");
+        const submitData = async () => {
+            if (![inputs].every(element => element)) {return alert("fill all inputs!")}
+            if (!parseInt(inputs[3].value)) {return alert("length should be positive int!")};
+            if (!moment(inputs[1].value, "YYYY-MM-DD", true).isValid()) {return alert("date format incorrect")};
+            let subject = inputs[0].value;
+            let subdate = inputs[1].value;
+            let work = inputs[2].value;
+            let length = parseInt(inputs[3].value);
+            try {await fetch(`/api/v1/db`, {method: "POST", body: JSON.stringify({subject, subdate, work, length}), headers: { "Content-Type": "application/json" }});}
+            catch(err) {console.log(err)};
+            window.location.href = "/"
+        };
+        submit.addEventListener("click", submitData);
+    </script>
+</html>
