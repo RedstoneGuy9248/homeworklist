@@ -8,7 +8,7 @@ services:
     volumes:
       -  ./setup.sql:/docker-entrypoint-initdb.d/setup.sql
   app:
-    image: ghcr.io/redstoneguy/homeworklist:latest
+    image: ghcr.io/redstoneguy9248/homeworklist:latest
     depends_on: [db]
     restart: always
     environment:
